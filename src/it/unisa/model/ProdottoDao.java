@@ -1,6 +1,7 @@
 package it.unisa.model;
 
 import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +13,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ProdottoDao implements ProdottoDaoInterfaccia{
 
@@ -153,8 +157,13 @@ public class ProdottoDao implements ProdottoDaoInterfaccia{
 
 		String selectSQL = "SELECT * FROM " + ProdottoDao.TABLE_NAME;
 
-		if (order != null && !order.equals("")) {
-			selectSQL += " ORDER BY " + order;
+		List<String> allowedOrderColumns = Arrays.asList("column1", "column2", "column3");
+
+		
+		if (order != null && allowedOrderColumns.contains(order)) {
+		    selectSQL += " ORDER BY " + order;
+		} else {
+		    throw new IllegalArgumentException("Invalid order by column: " + order);
 		}
 
 		try {
