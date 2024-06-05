@@ -150,57 +150,56 @@ public class ProdottoDao implements ProdottoDaoInterfaccia{
 
 	@Override
 	public synchronized ArrayList<ProdottoBean> doRetrieveAll(String order) throws SQLException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
+	    Connection connection = null;
+	    PreparedStatement preparedStatement = null;
+	    ArrayList<ProdottoBean> products = new ArrayList<ProdottoBean>();
 
-		ArrayList<ProdottoBean> products = new ArrayList<ProdottoBean>();
+	    String selectSQL = "SELECT * FROM " + ProdottoDao.TABLE_NAME;
 
-		String selectSQL = "SELECT * FROM " + ProdottoDao.TABLE_NAME;
+	    List<String> allowedOrderColumns = Arrays.asList("ID_PRODOTTO", "NOME", "PREZZO"); // Usa nomi di colonne reali
 
-		List<String> allowedOrderColumns = Arrays.asList("column1", "column2", "column3");
+	    // Verifica se l'input di ordinamento è valido
+	    if (order != null && allowedOrderColumns.contains(order)) {
+	        selectSQL += " ORDER BY " + order;
+	    } else if (order != null) {
+	        throw new IllegalArgumentException("Invalid order by column: " + order);
+	    }
 
-		
-		if (order != null && allowedOrderColumns.contains(order)) {
-		    selectSQL += " ORDER BY " + order;
-		} else {
-		    throw new IllegalArgumentException("Invalid order by column: " + order);
-		}
+	    try {
+	        connection = ds.getConnection();
+	        preparedStatement = connection.prepareStatement(selectSQL);
+	        ResultSet rs = preparedStatement.executeQuery();
 
-		try {
-			connection = ds.getConnection();
-			preparedStatement = connection.prepareStatement(selectSQL);
+	        while (rs.next()) {
+	            ProdottoBean bean = new ProdottoBean();
 
-			ResultSet rs = preparedStatement.executeQuery();
+	            bean.setIdProdotto(rs.getInt("ID_PRODOTTO"));
+	            bean.setNome(rs.getString("NOME"));
+	            bean.setDescrizione(rs.getString("DESCRIZIONE"));
+	            bean.setPrezzo(rs.getDouble("PREZZO"));
+	            bean.setQuantità(rs.getInt("QUANTITA"));
+	            bean.setPiattaforma(rs.getString("PIATTAFORMA"));
+	            bean.setIva(rs.getString("IVA"));
+	            bean.setDataUscita(rs.getString("DATA_USCITA"));
+	            bean.setInVendita(rs.getBoolean("IN_VENDITA"));
+	            bean.setImmagine(rs.getString("IMMAGINE"));
+	            bean.setGenere(rs.getString("GENERE"));
+	            bean.setDescrizioneDettagliata(rs.getString("DESCRIZIONE_DETTAGLIATA"));
 
-			while (rs.next()) {
-				ProdottoBean bean = new ProdottoBean();
-
-				bean.setIdProdotto(rs.getInt("ID_PRODOTTO"));
-				bean.setNome(rs.getString("NOME"));
-				bean.setDescrizione(rs.getString("DESCRIZIONE"));
-				bean.setPrezzo(rs.getDouble("PREZZO"));
-				bean.setQuantità(rs.getInt("QUANTITA"));
-				bean.setPiattaforma(rs.getString("PIATTAFORMA"));
-				bean.setIva(rs.getString("IVA"));
-				bean.setDataUscita(rs.getString("DATA_USCITA"));
-				bean.setInVendita(rs.getBoolean("IN_VENDITA"));
-				bean.setImmagine(rs.getString("IMMAGINE"));
-				bean.setGenere(rs.getString("GENERE"));
-				bean.setDescrizioneDettagliata(rs.getString("DESCRIZIONE_DETTAGLIATA"));
-
-				products.add(bean);
-			}
-
-		} finally {
-			try {
-				if (preparedStatement != null)
-					preparedStatement.close();
-			} finally {
-				if (connection != null)
-					connection.close();
-			}
-		}
-		return products;
+	            products.add(bean);
+	        }
+	    } finally {
+	        try {
+	            if (preparedStatement != null) {
+	                preparedStatement.close();
+	            }
+	        } finally {
+	            if (connection != null) {
+	                connection.close();
+	            }
+	        }
+	    }
+	    return products;
 	}
 	
 	@Override
