@@ -77,6 +77,13 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="script/Registrazione.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/validator/13.6.0/validator.min.js"></script>
+<script>
+function checkEmail(inputtxt) {
+    return validator.isEmail(inputtxt.value);
+}
+</script>
+
 	<script>
 		$(document).ready(function(){
 			$("#us").keyup(function(){
