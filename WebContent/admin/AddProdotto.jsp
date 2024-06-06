@@ -69,6 +69,28 @@
 	</form>
 	
 	</div>
+	
+	<script>
+	document.getElementById("myform").addEventListener("submit", function(event) {
+	    var nome = document.getElementsByName("nome")[0].value;
+	    var descrizione = document.getElementsByName("descrizione")[0].value;
+
+	    // Sanitizza l'input se necessario
+	    if (!validateInput(nome) || !validateInput(descrizione)) {
+	        event.preventDefault();
+	        alert("Input non valido!");
+	    }
+	});
+
+	function validateInput(input) {
+	    var regex = /^[a-zA-Z0-9\s]+$/;
+	    return regex.test(input);
+	}
+
+	</script>
+
+
+
 
 	<%@ include file="../fragments/footer.jsp" %>
 
